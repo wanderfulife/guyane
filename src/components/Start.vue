@@ -611,17 +611,17 @@ const startSurvey = () => {
   currentStep.value = "survey";
   isSurveyComplete.value = false;
 
-  // Make sure we start with Q0 (vehicle type) question
-  questionPath.value = ["Q0"];
+  // Make sure we start with Poste question
+  questionPath.value = ["Poste"];
 
-  // Find the index of the Q0 question to ensure we start there
-  const q0Index = questions.findIndex((q) => q.id === "Q0");
-  if (q0Index !== -1) {
-    currentQuestionIndex.value = q0Index;
-    console.log("Starting with vehicle type question (Q0)");
+  // Find the index of the Poste question to ensure we start there
+  const posteIndex = questions.findIndex((q) => q.id === "Poste");
+  if (posteIndex !== -1) {
+    currentQuestionIndex.value = posteIndex;
+    console.log("Starting with Poste question");
   } else {
     currentQuestionIndex.value = 0;
-    console.warn("Warning: Could not find Q0 question in questions array");
+    console.warn("Warning: Could not find Poste question in questions array");
   }
 
   // Reset all input fields
@@ -689,19 +689,60 @@ const selectAnswer = (option, index) => {
       answers.value
     );
   }
+  // Special handling for Poste selection
+  else if (questionId === "Poste") {
+    console.log(
+      `Selected Poste: ${option.text} (index: ${index}, value: ${index + 1})`
+    );
+
+    // Store Poste selection in answers
+    answers.value.Poste = index + 1;
+
+    // Add to question_answers array
+    if (!answers.value.question_answers) {
+      answers.value.question_answers = [];
+    }
+
+    // Remove any existing Poste entry if changing answer
+    const existingPosteIndex = answers.value.question_answers.findIndex(
+      (qa) => qa.questionId === "Poste"
+    );
+
+    if (existingPosteIndex !== -1) {
+      answers.value.question_answers.splice(existingPosteIndex, 1);
+    }
+
+    // Add the Poste answer to tracking array
+    answers.value.question_answers.push({
+      questionId: "Poste",
+      questionText: "Poste",
+      optionId: option.id || index + 1,
+      optionText: option.text,
+      optionIndex: index,
+    });
+
+    // Store the selected poste for reference
+    selectedPoste.value = option.text;
+
+    console.log("Poste selection saved:", answers.value);
+  }
   // For non-Q0 questions
   else {
-    // Special check for missing Q0
+    // Special check for missing Q0 - only check this for questions after Q0 (not for Poste)
     if (
       !answers.value.hasOwnProperty("Q0") &&
-      !sessionStorage.getItem("vehicleType")
+      !sessionStorage.getItem("vehicleType") &&
+      questionId !== "Poste"
     ) {
       console.warn(
         "Warning: Answering questions without a vehicle type set. Redirecting to vehicle selection."
       );
-      // Reset to the beginning to force vehicle type selection
-      currentQuestionIndex.value = 0;
-      questionPath.value = ["Q0"];
+      // Find Q0 index
+      const q0Index = questions.findIndex((q) => q.id === "Q0");
+      if (q0Index !== -1) {
+        currentQuestionIndex.value = q0Index;
+        questionPath.value.push("Q0");
+      }
       return;
     }
 
@@ -1129,6 +1170,18 @@ const finishSurvey = async () => {
     Q0_optionId: capturedQ0_optionId || vehicleTypeValue,
   };
 
+  // Add Poste information if available
+  const posteAnswer = surveyData.question_answers?.find(
+    (qa) => qa.questionId === "Poste"
+  );
+  if (posteAnswer) {
+    orderedAnswers.Poste = posteAnswer.optionIndex + 1; // Convert to 1-based index
+    orderedAnswers.Poste_text = posteAnswer.optionText;
+  } else if (selectedPoste.value) {
+    // Fallback to selectedPoste if not in question_answers
+    orderedAnswers.Poste_text = selectedPoste.value;
+  }
+
   // Loop through all entries in captured surveyData
   for (const [key, value] of Object.entries(surveyData)) {
     // Skip already added fields, question_answers, and any _text fields
@@ -1260,9 +1313,9 @@ const resetSurvey = () => {
   startDate.value = "";
   answers.value = { question_answers: [] };
 
-  // Reset indices and paths
+  // Reset indices and paths to start with Poste question
   currentQuestionIndex.value = 0;
-  questionPath.value = ["Q0"];
+  questionPath.value = ["Poste"];
 
   // Reset all input fields
   freeTextAnswer.value = "";
@@ -1270,6 +1323,7 @@ const resetSurvey = () => {
   postalCodePrefix.value = "";
   stationInput.value = "";
   streetInput.value = "";
+  selectedPoste.value = null;
 
   // Clear completion state
   isSurveyComplete.value = false;

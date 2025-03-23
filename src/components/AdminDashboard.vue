@@ -174,6 +174,7 @@ const downloadData = async () => {
       "JOUR",
       "HEURE_DEBUT",
       "HEURE_FIN",
+      "Poste",
       "TYPE_VEHICULE",
       "Q0",
       // VL headers

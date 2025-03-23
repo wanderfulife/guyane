@@ -1,5 +1,17 @@
 export const questions = [
 	{
+		id: "Poste",
+		text: "Poste",
+		options: [
+			{ id: 1, text: "Poste 1 :  route de Tarzan nord", next: "Q0" },
+			{ id: 2, text: "Poste 2 : route de Tarzan sud", next: "Q0" },
+			{ id: 3, text: "Poste 3 : route des Encens ouest", next: "Q0" },
+			{ id: 4, text: "Poste 4 : route des Encens est", next: "Q0" },
+			{ id: 5, text: "Poste 5 : route de Suzini nord", next: "Q0" },
+			{ id: 6, text: "Poste 6 : route de Suzini sud", next: "Q0" },
+		],
+	},
+	{
 		id: "Q0",
 		text: "Type de véhicule",
 		options: [
