@@ -455,9 +455,10 @@ onMounted(() => {
 }
 
 .admin-dashboard {
-  max-width: 500px;
+  max-width: 800px;
+  max-height: 90vh;
   padding: 20px 30px;
-  height: auto;
+  overflow-y: auto;
 }
 
 .admin-dashboard h2 {
@@ -473,6 +474,8 @@ onMounted(() => {
   flex-direction: column;
   gap: 12px;
   margin-bottom: 20px;
+  max-height: calc(80vh - 120px);
+  overflow-y: auto;
 }
 
 .dashboard-card {
@@ -512,6 +515,11 @@ onMounted(() => {
   align-items: center;
   padding: 6px 0;
   color: white;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dashboard-card li:last-child {
+  border-bottom: none;
 }
 
 .count {
@@ -520,17 +528,20 @@ onMounted(() => {
 }
 
 .btn-download {
+  position: sticky;
+  bottom: 0;
   width: 100%;
-  padding: 12px;
+  padding: 15px;
   background-color: #3b82f6;
   color: white;
   border: none;
   border-radius: 10px;
   font-size: 16px;
-  font-weight: normal;
+  font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s;
-  margin-top: 0;
+  margin-top: 20px;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .btn-download:hover {
@@ -539,12 +550,13 @@ onMounted(() => {
 
 @media (max-width: 600px) {
   .modal-content {
-    margin: 20px;
-    width: calc(100% - 40px);
+    margin: 10px;
+    width: calc(100% - 20px);
+    max-height: 90vh;
   }
 
   .admin-dashboard {
-    padding: 20px;
+    padding: 15px;
   }
 
   .admin-dashboard h2 {
@@ -558,6 +570,11 @@ onMounted(() => {
 
   .big-number {
     font-size: 36px;
+  }
+
+  .btn-download {
+    padding: 12px;
+    font-size: 14px;
   }
 }
 </style>
